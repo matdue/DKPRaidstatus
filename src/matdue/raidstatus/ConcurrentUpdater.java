@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import matdue.raidstatus.data.DkpData;
+import matdue.raidstatus.data.database.RaidDatabase;
 import matdue.raidstatus.helper.HttpClientHelper;
 
 import org.apache.http.HttpEntity;
@@ -24,12 +26,14 @@ public class ConcurrentUpdater implements Runnable {
 	
 	private String url;
 	private Handler handler;
+	private RaidDatabase raidDatabase;
 	
 	private final static String USER_AGENT = "DKP Raidstatus";
 
-	public ConcurrentUpdater(String url, Handler handler) {
+	public ConcurrentUpdater(String url, Handler handler, RaidDatabase raidDatabase) {
 		this.url = url;
 		this.handler = handler;
+		this.raidDatabase = raidDatabase;
 	}
 	
 	@Override
@@ -48,12 +52,8 @@ public class ConcurrentUpdater implements Runnable {
 		        	}
 		        	
 		        	InputStream stream = entity.getContent();
-		        	BufferedReader reader = new BufferedReader(new InputStreamReader(stream, contentCharset));
-		        	int linesRead = 0;
-					while ((reader.readLine()) != null) {
-						++linesRead;
-					}
-					Log.v("xxx", Integer.toString(linesRead));
+		        	BufferedReader reader = new BufferedReader(new InputStreamReader(stream, contentCharset), 8192);
+		        	parseAndSave(reader);
 					stream.close();
 				} else {
 					handler.sendEmptyMessage(NO_DATA);
@@ -64,7 +64,6 @@ public class ConcurrentUpdater implements Runnable {
 				return;
 			}
 		} catch (IOException e) {
-			Log.v("xxx", "update failed", e);
 			handler.obtainMessage(NETWORK_ERROR, e.getMessage()).sendToTarget();
 			return;
 		} finally {
@@ -72,6 +71,21 @@ public class ConcurrentUpdater implements Runnable {
 		}
 		
 		handler.sendEmptyMessage(OK);
+	}
+	
+	private void parseAndSave(BufferedReader reader) throws IOException {
+		Log.v("DKPRaidStatus", "Start parseAndSave()");
+		DkpData dkpData = new DkpData();
+		dkpData.parse(reader);
+		Log.v("DKPRaidStatus", "Parsing done");
+		
+		raidDatabase.deleteAllData();
+		Log.v("DKPRaidStatus", "Delete done");
+		raidDatabase.insertPlayers(dkpData.players.values());
+		Log.v("DKPRaidStatus", "Player storage done");
+		raidDatabase.insertRaids(dkpData.raids);
+		Log.v("DKPRaidStatus", "Raid storage done");
+		raidDatabase.close();
 	}
 
 }

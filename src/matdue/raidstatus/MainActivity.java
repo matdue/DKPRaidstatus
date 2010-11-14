@@ -1,5 +1,7 @@
 package matdue.raidstatus;
 
+import matdue.raidstatus.data.Raid;
+import matdue.raidstatus.data.database.RaidDatabase;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -40,6 +42,16 @@ public class MainActivity extends Activity {
         
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.main);
+        
+        updateView();
+    }
+    
+    private void updateView() {
+    	RaidDatabase db = new RaidDatabase(this);
+    	Raid nextRaid = db.loadRaid();
+    	if (nextRaid != null) {
+    		Toast.makeText(this, nextRaid.name, Toast.LENGTH_SHORT).show();
+    	}
     }
     
     @Override
@@ -78,7 +90,8 @@ public class MainActivity extends Activity {
 		url = url + "getdkp.php";
 
         setProgressBarIndeterminateVisibility(true);
-        ConcurrentUpdater updater = new ConcurrentUpdater(url, handler);
+        RaidDatabase db = new RaidDatabase(this);
+        ConcurrentUpdater updater = new ConcurrentUpdater(url, handler, db);
         new Thread(updater).start();
     }
 }
