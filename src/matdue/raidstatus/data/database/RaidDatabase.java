@@ -1,6 +1,9 @@
 package matdue.raidstatus.data.database;
 
+import java.text.Collator;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Date;
 
 import matdue.raidstatus.data.Player;
@@ -13,6 +16,7 @@ import android.database.Cursor;
 import android.database.DatabaseUtils.InsertHelper;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 public class RaidDatabase extends SQLiteOpenHelper {
 
@@ -153,6 +157,39 @@ public class RaidDatabase extends SQLiteOpenHelper {
 		}
 		cursor.close();
 		db.close();
+		
+		return result;
+	}
+	
+	public String[] loadPlayerNames() {
+		String[] result = new String[0];
+		
+		// Load data
+		SQLiteDatabase db = null;
+		try {
+			db = getReadableDatabase();
+			Cursor cursor = db.query(PlayerTable.TABLE_NAME, new String[] { PlayerColumns.NAME }, null, null, null, null, null);
+			result = new String[cursor.getCount()];
+			while (cursor.moveToNext()) {
+				result[cursor.getPosition()] = cursor.getString(0);
+			}
+			cursor.close();
+		} catch (Exception e) {
+			Log.e("DKPRaidstatus", "Error loading player names", e);
+		} finally {
+			if (db != null) {
+				db.close();
+			}
+		}
+		
+		// Sort names
+		final Collator col = Collator.getInstance();
+		Arrays.sort(result, new Comparator<String>() {
+			@Override
+			public int compare(String string1, String string2) {
+				return col.compare(string1, string2);
+			}}
+		);
 		
 		return result;
 	}
