@@ -1,6 +1,9 @@
 package matdue.raidstatus;
 
+import java.text.NumberFormat;
+
 import matdue.raidstatus.data.Raid;
+import matdue.raidstatus.data.RaidMember;
 import matdue.raidstatus.data.database.RaidDatabase;
 import android.app.Activity;
 import android.content.Intent;
@@ -92,6 +95,7 @@ public class MainActivity extends Activity {
     		findViewById(R.id.NoDataLayout).setVisibility(View.GONE);
     		findViewById(R.id.RaidLayout).setVisibility(View.VISIBLE);
     		
+    		// Raid information
     		String message = getResources().getString(R.string.main_raid_title, nextRaid.name);
     		TextView view = (TextView) findViewById(R.id.main_raid_title);
     		view.setText(message);
@@ -109,10 +113,62 @@ public class MainActivity extends Activity {
     		url = url + "games/WoW/events/" + nextRaid.icon;
     		ImageLoader imageLoader = new ImageLoader(url, handler, getCacheDir(), R.id.RaidLogo);
     		new Thread(imageLoader).run();
+    		
+    		// Player information
+    		String playerName = getSharedPreferences().getString("charname", null);
+    		if (playerName != null) {
+				// Lookup player in members
+				for (RaidMember member : nextRaid.raidMembers) {
+					if (playerName.equals(member.player.name)) {
+						// Got it, display information
+						String subscription = getResources().getStringArray(R.array.subscription)[member.subscribed];
+						
+						if (member.role == null) {
+							message = getResources().getString(R.string.main_raid_player, 
+									playerName, subscription);
+						} else {
+							String role = "???";
+							if ("tank".equals(member.role)) {
+								role = getResources().getStringArray(R.array.role)[0];
+							} else if ("healer".equals(member.role)) {
+								role = getResources().getStringArray(R.array.role)[1];
+							} else if ("melee".equals(member.role)) {
+								role = getResources().getStringArray(R.array.role)[2];
+							} else if ("range".equals(member.role)) {
+								role = getResources().getStringArray(R.array.role)[3];
+							}
+							
+							message = getResources().getString(R.string.main_raid_player_role, 
+									playerName, subscription, role);
+						}
+						view = (TextView) findViewById(R.id.main_raid_player);
+						view.setText(message);
+						view.setVisibility(View.VISIBLE);
+						
+						// Note
+						if (member.note != null && member.note.length() != 0) {
+							message = getResources().getString(R.string.main_raid_player_note, member.note);
+							view = (TextView) findViewById(R.id.main_raid_player_note);
+							view.setText(message);
+							view.setVisibility(View.VISIBLE);
+						}
+						
+						// DKP
+						message = getResources().getString(R.string.main_raid_player_dkp, 
+								NumberFormat.getInstance().format(member.player.currentDkp));
+						view = (TextView) findViewById(R.id.main_raid_player_dkp);
+						view.setText(message);
+						view.setVisibility(View.VISIBLE);
+						
+						break;
+					}
+				}
+    		}
     	} else {
     		findViewById(R.id.RaidLayout).setVisibility(View.GONE);
     		findViewById(R.id.NoDataLayout).setVisibility(View.VISIBLE);
     	}
+    	db.close();
     }
     
     @Override

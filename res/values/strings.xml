@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="main_raid_player_role">%1$s ist %2$s als %3$s</string>
+    <string name="main_raid_player">%1$s ist %2$s</string>
     <string name="menu_main_update">Aktualisieren</string>
     <string name="preference_common_charname_summary">Wählbar, sobald Daten geladen wurden</string>
     <string name="preference_common_charname">Charaktername</string>
@@ -17,4 +19,6 @@
 <string name="main_raid_time_format">kk:mm</string>
 <string name="main_raid_datetime">%1$s, %2$s Uhr</string>
 <string name="main_no_data">Keine Daten vorhanden</string>
+<string name="main_raid_player_note">Notiz: %1$s</string>
+<string name="main_raid_player_dkp">%1$s DKP</string>
 </resources>
