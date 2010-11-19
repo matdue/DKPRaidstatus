@@ -1,15 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen
-  xmlns:android="http://schemas.android.com/apk/res/android">
-  
-  <PreferenceCategory 
-    android:title="@string/preference_title_common">
-    <EditTextPreference 
-      android:title="@string/preference_common_url" 
-      android:key="url"
-      android:defaultValue="">
-    </EditTextPreference>
-  <ListPreference android:title="@string/preference_common_charname" android:key="charname" android:summary="@string/preference_common_charname_summary"></ListPreference>
-</PreferenceCategory>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+	<PreferenceCategory android:title="@string/preference_title_common">
+		<EditTextPreference android:title="@string/preference_common_url"
+			android:key="url" android:defaultValue="" />
+
+		<ListPreference android:title="@string/preference_common_charname"
+			android:key="charname" android:summary="@string/preference_common_charname_summary" />
+	</PreferenceCategory>
 
 </PreferenceScreen>

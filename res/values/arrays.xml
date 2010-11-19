@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-<string-array name="subscription"><item>\?\?\?</item>
-<item>bestätigt</item>
-<item>angemeldet</item>
-<item>abgemeldet</item>
-<item>auf Ersatzbank</item>
-<item>noch nicht angemeldet</item>
-</string-array>
-<string-array name="role"><item>Tank</item>
-<item>Heiler</item>
-<item>DD Nahkampf</item>
-<item>DD Fernkampf</item>
-</string-array>
+	<string-array name="subscription">
+		<item>\?\?\?</item>
+		<item>bestätigt</item>
+		<item>angemeldet</item>
+		<item>abgemeldet</item>
+		<item>auf Ersatzbank</item>
+		<item>noch nicht angemeldet</item>
+	</string-array>
+	<string-array name="role">
+		<item>Tank</item>
+		<item>Heiler</item>
+		<item>DD Nahkampf</item>
+		<item>DD Fernkampf</item>
+	</string-array>
 </resources>

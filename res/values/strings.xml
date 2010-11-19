@@ -1,24 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="main_raid_player_role">%1$s ist %2$s als %3$s</string>
-    <string name="main_raid_player">%1$s ist %2$s</string>
-    <string name="menu_main_update">Aktualisieren</string>
-    <string name="preference_common_charname_summary">Wählbar, sobald Daten geladen wurden</string>
-    <string name="preference_common_charname">Charaktername</string>
-    <string name="preference_title">Einstellungen</string>
-    <string name="menu_main_preferences">Einstellungen</string>
-    <string name="hello">Hello World, MainActivity!</string>
-    <string name="app_name">DKP + Raidstatus</string>
-<string name="preference_title_common">Allgemeines</string>
-<string name="preference_common_url">URL des EqDKP-Systems</string>
-<string name="message_not_configured_yet">Bitte zunächst Adresse des DKP-System einstellen</string>
-<string name="message_dkp_network_error">Laden der Daten vom DKP-System fehlgeschlagen: %1$s</string>
-<string name="message_dkp_no_data">Keine Daten vom DKP-System empfangen. Bitte Einstellungen prüfen.</string>
-<string name="main_raid_title">Nächster Raid: %1$s</string>
-<string name="main_raid_date_format">EEEE, d. MMMM</string>
-<string name="main_raid_time_format">kk:mm</string>
-<string name="main_raid_datetime">%1$s, %2$s Uhr</string>
-<string name="main_no_data">Keine Daten vorhanden</string>
-<string name="main_raid_player_note">Notiz: %1$s</string>
-<string name="main_raid_player_dkp">%1$s DKP</string>
+	<string name="main_raid_player_role">%1$s ist %2$s als %3$s</string>
+	<string name="main_raid_player">%1$s ist %2$s</string>
+	<string name="menu_main_update">Aktualisieren</string>
+	<string name="preference_common_charname_summary">Wählbar, sobald Daten geladen wurden</string>
+	<string name="preference_common_charname">Charaktername</string>
+	<string name="preference_title">Einstellungen</string>
+	<string name="menu_main_preferences">Einstellungen</string>
+	<string name="hello">Hello World, MainActivity!</string>
+	<string name="app_name">DKP + Raidstatus</string>
+	<string name="preference_title_common">Allgemeines</string>
+	<string name="preference_common_url">URL des EqDKP-Systems</string>
+	<string name="message_not_configured_yet">Bitte zunächst Adresse des DKP-System einstellen
+	</string>
+	<string name="message_dkp_network_error">Laden der Daten vom DKP-System fehlgeschlagen: %1$s
+	</string>
+	<string name="message_dkp_no_data">Keine Daten vom DKP-System empfangen. Bitte
+		Einstellungen prüfen.</string>
+	<string name="main_raid_title">Nächster Raid: %1$s</string>
+	<string name="main_raid_date_format">EEEE, d. MMMM</string>
+	<string name="main_raid_time_format">kk:mm</string>
+	<string name="main_raid_datetime">%1$s, %2$s Uhr</string>
+	<string name="main_no_data">Keine Daten vorhanden</string>
+	<string name="main_raid_player_note">Notiz: %1$s</string>
+	<string name="main_raid_player_dkp">%1$s DKP</string>
 </resources>
