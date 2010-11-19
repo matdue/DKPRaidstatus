@@ -1,6 +1,8 @@
 package matdue.raidstatus.data.database;
 
+import java.math.BigDecimal;
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
@@ -144,21 +146,71 @@ public class RaidDatabase extends SQLiteOpenHelper {
 	
 	public Raid loadRaid() {
 		SQLiteDatabase db = getReadableDatabase();
-		Raid result = null;
+		
+		// Load raid
+		Raid raid = null;
 		Cursor cursor = db.query(RaidTable.TABLE_NAME, 
 				new String[] { 
+					RaidColumns.ID,
 					RaidColumns.NAME, 
-					RaidColumns.START }, 
+					RaidColumns.START,
+					RaidColumns.ICON }, 
 				null, null, null, null, RaidColumns.START, "1");
 		if (cursor.moveToNext()) {
-			result = new Raid();
-			result.name = cursor.getString(0);
-			result.start = new Date(1000L * cursor.getInt(1));
+			raid = new Raid();
+			raid._id = cursor.getLong(0);
+			raid.name = cursor.getString(1);
+			raid.start = new Date(1000L * cursor.getInt(2));
+			raid.icon = cursor.getString(3);
 		}
 		cursor.close();
+		
+		// Load its members
+		if (raid != null) {
+			raid.raidMembers = new ArrayList<RaidMember>();
+			String query = "SELECT p." + PlayerColumns.NAME + ", p." + PlayerColumns.CLASSNAME + ", p." + PlayerColumns.CURRENTDKP +
+				", m." + RaidMemberColumns.SUBSCRIBED + ", m." + RaidMemberColumns.NOTE + ", m." + RaidMemberColumns.ROLE +
+				" FROM " + RaidMemberTable.TABLE_NAME + " m, " + PlayerTable.TABLE_NAME + " p" +
+				" WHERE m." + RaidMemberColumns.RAIDID + " = ?" +
+				" AND m." + RaidMemberColumns.PLAYERID + " = p." + PlayerColumns.ID;
+			cursor = db.rawQuery(query, new String[] { Long.toString(raid._id) });
+			while (cursor.moveToNext()) {
+				RaidMember member = new RaidMember();
+				Player player = member.player = new Player();
+				player.name = cursor.getString(0);
+				player.className = cursor.getString(1);
+				player.currentDkp = new BigDecimal(cursor.getString(2));
+				
+				member.subscribed = cursor.getInt(3);
+				member.note = cursor.getString(4);
+				member.role = cursor.getString(5);
+				
+				raid.raidMembers.add(member);
+			}
+			cursor.close();
+		}
+		
+		// Load its classes
+		if (raid != null) {
+			raid.raidClasses = new ArrayList<RaidClass>();
+			cursor = db.query(RaidClassTable.TABLE_NAME, 
+					new String[] { RaidClassColumns.CLASSNAME, RaidClassColumns.COUNT }, 
+					RaidClassColumns.RAIDID + " = ?", 
+					new String[] { Long.toString(raid._id) }, 
+					null, null, null);
+			while (cursor.moveToNext()) {
+				RaidClass raidClass = new RaidClass();
+				raidClass.className = cursor.getString(0);
+				raidClass.count = cursor.getInt(1);
+				
+				raid.raidClasses.add(raidClass);
+			}
+			cursor.close();
+		}
+		
 		db.close();
 		
-		return result;
+		return raid;
 	}
 	
 	public String[] loadPlayerNames() {

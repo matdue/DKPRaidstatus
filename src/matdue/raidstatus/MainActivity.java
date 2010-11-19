@@ -5,11 +5,16 @@ import matdue.raidstatus.data.database.RaidDatabase;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.Window;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends Activity {
@@ -20,6 +25,7 @@ public class MainActivity extends Activity {
 			switch (msg.what) {
 			case ConcurrentUpdater.OK:
 				setProgressBarIndeterminateVisibility(false);
+				updateView();
 				break;
 				
 			case ConcurrentUpdater.NETWORK_ERROR:
@@ -32,7 +38,21 @@ public class MainActivity extends Activity {
 				setProgressBarIndeterminateVisibility(false);
 				Toast.makeText(MainActivity.this, R.string.message_dkp_no_data, Toast.LENGTH_LONG).show();
 				break;
+				
+			case ImageLoader.OK:
+				ImageView image = (ImageView) findViewById(msg.arg1);
+	    		image.setImageBitmap((Bitmap) msg.obj);
+	    		break;
 			}
+		}
+	};
+	
+	private boolean preferencesHaveChanged = false;
+	private SharedPreferences.OnSharedPreferenceChangeListener preferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
+		
+		@Override
+		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+			preferencesHaveChanged = true;
 		}
 	};
 	
@@ -40,17 +60,58 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        getSharedPreferences().registerOnSharedPreferenceChangeListener(preferencesListener);
+        
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.main);
         
         updateView();
     }
     
+    @Override
+    protected void onStart() {
+    	super.onStart();
+    	
+    	if (preferencesHaveChanged) {
+    		preferencesHaveChanged = false;
+    		updateRaidData();
+    	}
+    }
+    
+    @Override
+    protected void onDestroy() {
+    	super.onDestroy();
+    	
+    	getSharedPreferences().unregisterOnSharedPreferenceChangeListener(preferencesListener);
+    }
+    
     private void updateView() {
     	RaidDatabase db = new RaidDatabase(this);
     	Raid nextRaid = db.loadRaid();
     	if (nextRaid != null) {
-    		Toast.makeText(this, nextRaid.name, Toast.LENGTH_SHORT).show();
+    		findViewById(R.id.NoDataLayout).setVisibility(View.GONE);
+    		findViewById(R.id.RaidLayout).setVisibility(View.VISIBLE);
+    		
+    		String message = getResources().getString(R.string.main_raid_title, nextRaid.name);
+    		TextView view = (TextView) findViewById(R.id.main_raid_title);
+    		view.setText(message);
+    		
+    		message = getResources().getString(R.string.main_raid_datetime, 
+    				DateFormat.format(getResources().getString(R.string.main_raid_date_format), nextRaid.start),
+    				DateFormat.format(getResources().getString(R.string.main_raid_time_format), nextRaid.start));
+    		view = (TextView) findViewById(R.id.main_raid_datetime);
+    		view.setText(message);
+    		
+    		String url = getSharedPreferences().getString("url", "");
+    		if (!url.endsWith("/")) {
+    			url = url + "/";
+    		}
+    		url = url + "games/WoW/events/" + nextRaid.icon;
+    		ImageLoader imageLoader = new ImageLoader(url, handler, getCacheDir(), R.id.RaidLogo);
+    		new Thread(imageLoader).run();
+    	} else {
+    		findViewById(R.id.RaidLayout).setVisibility(View.GONE);
+    		findViewById(R.id.NoDataLayout).setVisibility(View.VISIBLE);
     	}
     }
     
@@ -77,8 +138,7 @@ public class MainActivity extends Activity {
     }
     
     private void updateRaidData() {
-		SharedPreferences preferences = getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
-		String url = preferences.getString("url", null);
+		String url = getSharedPreferences().getString("url", null);
 		if (url == null) {
 			Toast.makeText(this, R.string.message_not_configured_yet, Toast.LENGTH_SHORT).show();
 			return;
@@ -93,5 +153,9 @@ public class MainActivity extends Activity {
         RaidDatabase db = new RaidDatabase(this);
         ConcurrentUpdater updater = new ConcurrentUpdater(url, handler, db);
         new Thread(updater).start();
+    }
+    
+    private SharedPreferences getSharedPreferences() {
+    	return getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
     }
 }

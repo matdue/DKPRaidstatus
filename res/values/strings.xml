@@ -12,4 +12,9 @@
 <string name="message_not_configured_yet">Bitte zunächst Adresse des DKP-System einstellen</string>
 <string name="message_dkp_network_error">Laden der Daten vom DKP-System fehlgeschlagen: %1$s</string>
 <string name="message_dkp_no_data">Keine Daten vom DKP-System empfangen. Bitte Einstellungen prüfen.</string>
+<string name="main_raid_title">Nächster Raid: %1$s</string>
+<string name="main_raid_date_format">EEEE, d. MMMM</string>
+<string name="main_raid_time_format">kk:mm</string>
+<string name="main_raid_datetime">%1$s, %2$s Uhr</string>
+<string name="main_no_data">Keine Daten vorhanden</string>
 </resources>

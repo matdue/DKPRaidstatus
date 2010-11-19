@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    >
-<TextView  
-    android:layout_width="fill_parent" 
-    android:layout_height="wrap_content" 
-    android:text="@string/hello"
-    />
+	android:orientation="vertical" android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<LinearLayout android:id="@+id/NoDataLayout"
+		android:layout_height="fill_parent" android:layout_width="fill_parent"
+		android:visibility="gone">
+		<TextView android:text="@string/main_no_data"
+			android:gravity="center_vertical|center_horizontal"
+			android:layout_height="fill_parent" android:layout_width="fill_parent"></TextView>
+
+</LinearLayout><RelativeLayout android:id="@+id/RaidLayout" android:visibility="visible" android:layout_height="fill_parent" android:layout_width="fill_parent" android:padding="5dp"><ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_alignParentRight="true" android:layout_alignParentTop="true" android:scaleType="centerCrop" android:adjustViewBounds="true" android:maxHeight="100dp" android:maxWidth="100dp" android:layout_marginLeft="10dp" android:id="@+id/RaidLogo"></ImageView><TextView android:layout_height="wrap_content" android:id="@+id/main_raid_title" android:layout_alignParentTop="true" android:layout_width="wrap_content" android:layout_alignParentLeft="true" android:layout_toLeftOf="@id/RaidLogo"/><TextView android:layout_height="wrap_content" android:id="@+id/main_raid_datetime" android:layout_below="@id/main_raid_title" android:layout_width="wrap_content" android:layout_alignParentLeft="true" android:layout_toLeftOf="@id/RaidLogo"></TextView></RelativeLayout>
+	
+
 </LinearLayout>
