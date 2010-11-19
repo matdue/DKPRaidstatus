@@ -1,6 +1,7 @@
 package matdue.raidstatus;
 
 import java.text.NumberFormat;
+import java.util.Date;
 
 import matdue.raidstatus.data.Raid;
 import matdue.raidstatus.data.RaidMember;
@@ -8,6 +9,7 @@ import matdue.raidstatus.data.database.RaidDatabase;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
@@ -82,6 +84,17 @@ public class MainActivity extends Activity {
     }
     
     @Override
+    protected void onResume() {
+    	super.onResume();
+    	
+    	// Automatically update if last update is an hour or more ago
+    	long lastUpdate = getSharedPreferences().getLong("lastUpdate", 0);
+    	if (lastUpdate == 0 || new Date().getTime() - lastUpdate > 60*60*1000L) {
+    		updateRaidData();
+    	}
+    }
+    
+    @Override
     protected void onDestroy() {
     	super.onDestroy();
     	
@@ -146,11 +159,13 @@ public class MainActivity extends Activity {
 						view.setVisibility(View.VISIBLE);
 						
 						// Note
+						view = (TextView) findViewById(R.id.main_raid_player_note);
 						if (member.note != null && member.note.length() != 0) {
 							message = getResources().getString(R.string.main_raid_player_note, member.note);
-							view = (TextView) findViewById(R.id.main_raid_player_note);
 							view.setText(message);
 							view.setVisibility(View.VISIBLE);
+						} else {
+							view.setVisibility(View.GONE);
 						}
 						
 						// DKP
@@ -194,6 +209,11 @@ public class MainActivity extends Activity {
     }
     
     private void updateRaidData() {
+    	Editor editor = getSharedPreferences().edit();
+    	editor.putLong("lastUpdate", new Date().getTime());
+    	editor.commit();  // will trigger registered OnSharedPreferenceChangeListener
+    	preferencesHaveChanged = false;
+    	
 		String url = getSharedPreferences().getString("url", null);
 		if (url == null) {
 			Toast.makeText(this, R.string.message_not_configured_yet, Toast.LENGTH_SHORT).show();
