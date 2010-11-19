@@ -6,7 +6,7 @@
     <string name="preference_title">Einstellungen</string>
     <string name="menu_main_preferences">Einstellungen</string>
     <string name="hello">Hello World, MainActivity!</string>
-    <string name="app_name">EqDKP Raidstatus</string>
+    <string name="app_name">DKP + Raidstatus</string>
 <string name="preference_title_common">Allgemeines</string>
 <string name="preference_common_url">URL des EqDKP-Systems</string>
 <string name="message_not_configured_yet">Bitte zunächst Adresse des DKP-System einstellen</string>
