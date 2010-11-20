@@ -60,27 +60,27 @@ public class DkpData {
 			
 			Player player = new Player();
 			
-			String[] nameValue = line.split("=");
-			if (nameValue.length < 2) {
+			int posEqualsSign = line.indexOf('=');
+			if (posEqualsSign == -1) {
 				return;
 			}
-			player.name = parseString(nameValue[0]);
+			player.name = parseString(line.substring(0, posEqualsSign));
 			
 			while ((line = reader.readLine()) != null) {
 				if (CLOSING_PATTERN.matcher(line).matches()) {
 					break;
 				}
 				
-				nameValue = line.split("=");
-				if (nameValue.length < 2) {
+				posEqualsSign = line.indexOf('=');
+				if (posEqualsSign == -1) {
 					break;
 				}
 				
-				String name = parseString(nameValue[0]);
+				String name = parseString(line.substring(0, posEqualsSign));
 				if ("class".equals(name)) {
-					player.className = parseString(nameValue[1]);
+					player.className = parseString(line.substring(posEqualsSign + 1));
 				} else if ("dkp_current".equals(name)) {
-					player.currentDkp = parseDecimal(nameValue[1]);
+					player.currentDkp = parseDecimal(line.substring(posEqualsSign + 1));
 				}
 			}
 			
@@ -107,28 +107,28 @@ public class DkpData {
 					break;
 				}
 				
-				String[] nameValue = line.split("=");
-				if (nameValue.length < 2) {
+				int posEqualsSign = line.indexOf('=');
+				if (posEqualsSign == -1) {
 					break;
 				}
 				
-				String name = parseString(nameValue[0]);
+				String name = parseString(line.substring(0, posEqualsSign));
 				if ("raid_name".equals(name)) {
-					raid.name = parseString(nameValue[1]);
+					raid.name = parseString(line.substring(posEqualsSign + 1));
 				} else if ("raid_icon".equals(name)) {
-					raid.icon = parseString(nameValue[1]);
+					raid.icon = parseString(line.substring(posEqualsSign + 1));
 				} else if ("raid_note".equals(name)) {
-					raid.note = parseString(nameValue[1]);
+					raid.note = parseString(line.substring(posEqualsSign + 1));
 				} else if ("raid_date".equals(name)) {
-					raid.start = parseDate(nameValue[1]);
+					raid.start = parseDate(line.substring(posEqualsSign + 1));
 				} else if ("raid_date_finish".equals(name)) {
-					raid.finish = parseDate(nameValue[1]);
+					raid.finish = parseDate(line.substring(posEqualsSign + 1));
 				} else if ("raid_date_invite".equals(name)) {
-					raid.invite = parseDate(nameValue[1]);
+					raid.invite = parseDate(line.substring(posEqualsSign + 1));
 				} else if ("raid_date_subscription".equals(name)) {
-					raid.subscription = parseDate(nameValue[1]);
+					raid.subscription = parseDate(line.substring(posEqualsSign + 1));
 				} else if ("raid_attendees".equals(name)) {
-					String attendees = parseString(nameValue[1]);
+					String attendees = parseString(line.substring(posEqualsSign + 1));
 					raid.attendees = parseInt(attendees);
 				} else if ("raid_members".equals(name)) {
 					raid.raidMembers = parseMembers(reader);
@@ -183,20 +183,20 @@ public class DkpData {
 				break;
 			}
 			
-			String[] nameValue = line.split("=");
-			if (nameValue.length < 2) {
+			int posEqualsSign = line.indexOf('=');
+			if (posEqualsSign == -1) {
 				break;
 			}
 			
-			String name = parseString(nameValue[0]);
+			String name = parseString(line.substring(0, posEqualsSign));
 			if ("player".equals(name)) {
-				member.player = players.get(parseString(nameValue[1]));
+				member.player = players.get(parseString(line.substring(posEqualsSign + 1)));
 			} else if ("role".equals(name)) {
-				member.role = parseString(nameValue[1]);
+				member.role = parseString(line.substring(posEqualsSign + 1));
 			} else if ("note".equals(name)) {
-				member.note = parseString(nameValue[1]);
+				member.note = parseString(line.substring(posEqualsSign + 1));
 			} else if ("subscribed".equals(name)) {
-				member.subscribed = parseInt(nameValue[1]);
+				member.subscribed = parseInt(line.substring(posEqualsSign + 1));
 			}
 		}
 		
@@ -227,16 +227,16 @@ public class DkpData {
 				break;
 			}
 			
-			String[] nameValue = line.split("=");
-			if (nameValue.length < 2) {
+			int posEqualsSign = line.indexOf('=');
+			if (posEqualsSign == -1) {
 				break;
 			}
 			
-			String name = parseString(nameValue[0]);
+			String name = parseString(line.substring(0, posEqualsSign));
 			if ("class_name".equals(name)) {
-				raidClass.className = parseString(nameValue[1]);
+				raidClass.className = parseString(line.substring(posEqualsSign + 1));
 			} else if ("class_count".equals(name)) {
-				raidClass.count = parseInt(nameValue[1]);
+				raidClass.count = parseInt(line.substring(posEqualsSign + 1));
 			} 
 		}
 		
@@ -244,12 +244,13 @@ public class DkpData {
 	}
 
 	String parseString(String luaCode) throws UnsupportedEncodingException {
-		StringBuilder result = new StringBuilder();
+		int luaCodeLength = luaCode.length();
+		StringBuilder result = new StringBuilder(luaCodeLength);
 		
 		boolean insideQuotation = false;
 		int idx = 0;
 		parserLoop:
-		while (idx < luaCode.length()) {
+		while (idx < luaCodeLength) {
 			char c = luaCode.charAt(idx++);
 			
 			if (insideQuotation) {
@@ -315,10 +316,11 @@ public class DkpData {
 	BigDecimal parseDecimal(String luaCode) {
 		BigDecimal result = BigDecimal.ZERO;
 		
-		StringBuilder number = new StringBuilder();
+		int luaCodeLength = luaCode.length();
+		StringBuilder number = new StringBuilder(luaCodeLength);
 		int idx = 0;
 		parserLoop:
-		while (idx < luaCode.length()) {
+		while (idx < luaCodeLength) {
 			char c = luaCode.charAt(idx++);
 			switch (c) {
 			case ' ':
@@ -361,10 +363,11 @@ public class DkpData {
 	int parseInt(String luaCode) {
 		int result = 0;
 		
-		StringBuilder number = new StringBuilder();
+		int luaCodeLength = luaCode.length();
+		StringBuilder number = new StringBuilder(luaCodeLength);
 		int idx = 0;
 		parserLoop:
-		while (idx < luaCode.length()) {
+		while (idx < luaCodeLength) {
 			char c = luaCode.charAt(idx++);
 			switch (c) {
 			case ' ':
