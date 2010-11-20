@@ -9,6 +9,7 @@ import java.lang.ref.SoftReference;
 import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Date;
 import java.util.HashMap;
 
 import matdue.raidstatus.helper.HttpClientHelper;
@@ -71,14 +72,21 @@ public class ImageLoader implements Runnable {
 		// Check if image is on disk
 		File cachedImageFile = new File(cacheDir, md5HashTag);
 		if (cachedImageFile.exists()) {
-			Bitmap cachedImage = BitmapFactory.decodeFile(cachedImageFile.getAbsolutePath());
-			if (cachedImage != null) {
-				// Cache image in memory
-				imageCache.put(md5HashTag, new SoftReference<Bitmap>(cachedImage));
-				
-				Log.v("ImageLoader", "In file cache: " + url);
-				handler.obtainMessage(OK, widgetID, 0, cachedImage).sendToTarget();
-				return;
+			// Keep cache files at most 2 weeks
+			long lastModified = cachedImageFile.lastModified();
+			if (lastModified + 2*7*24*60*60*1000L < new Date().getTime()) {
+				// Too old, delete it
+				cachedImageFile.delete();
+			} else {
+				Bitmap cachedImage = BitmapFactory.decodeFile(cachedImageFile.getAbsolutePath());
+				if (cachedImage != null) {
+					// Cache image in memory
+					imageCache.put(md5HashTag, new SoftReference<Bitmap>(cachedImage));
+					
+					Log.v("ImageLoader", "In file cache: " + url);
+					handler.obtainMessage(OK, widgetID, 0, cachedImage).sendToTarget();
+					return;
+				}
 			}
 		}
 		
