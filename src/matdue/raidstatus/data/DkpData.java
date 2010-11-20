@@ -64,7 +64,7 @@ public class DkpData {
 			if (posEqualsSign == -1) {
 				return;
 			}
-			player.name = parseString(line.substring(0, posEqualsSign));
+			player.setName(parseString(line.substring(0, posEqualsSign)));
 			
 			while ((line = reader.readLine()) != null) {
 				if (CLOSING_PATTERN.matcher(line).matches()) {
@@ -78,13 +78,13 @@ public class DkpData {
 				
 				String name = parseString(line.substring(0, posEqualsSign));
 				if ("class".equals(name)) {
-					player.className = parseString(line.substring(posEqualsSign + 1));
+					player.setClassName(parseString(line.substring(posEqualsSign + 1)));
 				} else if ("dkp_current".equals(name)) {
-					player.currentDkp = parseDecimal(line.substring(posEqualsSign + 1));
+					player.setCurrentDkp(parseDecimal(line.substring(posEqualsSign + 1)));
 				}
 			}
 			
-			players.put(player.name, player);
+			players.put(player.getName(), player);
 		}
 		
 		reader.readLine();  // Skip closing }
@@ -114,26 +114,26 @@ public class DkpData {
 				
 				String name = parseString(line.substring(0, posEqualsSign));
 				if ("raid_name".equals(name)) {
-					raid.name = parseString(line.substring(posEqualsSign + 1));
+					raid.setName(parseString(line.substring(posEqualsSign + 1)));
 				} else if ("raid_icon".equals(name)) {
-					raid.icon = parseString(line.substring(posEqualsSign + 1));
+					raid.setIcon(parseString(line.substring(posEqualsSign + 1)));
 				} else if ("raid_note".equals(name)) {
-					raid.note = parseString(line.substring(posEqualsSign + 1));
+					raid.setNote(parseString(line.substring(posEqualsSign + 1)));
 				} else if ("raid_date".equals(name)) {
-					raid.start = parseDate(line.substring(posEqualsSign + 1));
+					raid.setStart(parseDate(line.substring(posEqualsSign + 1)));
 				} else if ("raid_date_finish".equals(name)) {
-					raid.finish = parseDate(line.substring(posEqualsSign + 1));
+					raid.setFinish(parseDate(line.substring(posEqualsSign + 1)));
 				} else if ("raid_date_invite".equals(name)) {
-					raid.invite = parseDate(line.substring(posEqualsSign + 1));
+					raid.setInvite(parseDate(line.substring(posEqualsSign + 1)));
 				} else if ("raid_date_subscription".equals(name)) {
-					raid.subscription = parseDate(line.substring(posEqualsSign + 1));
+					raid.setSubscription(parseDate(line.substring(posEqualsSign + 1)));
 				} else if ("raid_attendees".equals(name)) {
 					String attendees = parseString(line.substring(posEqualsSign + 1));
-					raid.attendees = parseInt(attendees);
+					raid.setAttendees(parseInt(attendees));
 				} else if ("raid_members".equals(name)) {
-					raid.raidMembers = parseMembers(reader);
+					raid.setRaidMembers(parseMembers(reader));
 				} else if ("raid_classes".equals(name)) {
-					raid.raidClasses = parseRaidClasses(reader);
+					raid.setRaidClasses(parseRaidClasses(reader));
 				} else if ("raid_classes_role".equals(name)) {
 					skipBlock(reader);
 				}
@@ -190,13 +190,13 @@ public class DkpData {
 			
 			String name = parseString(line.substring(0, posEqualsSign));
 			if ("player".equals(name)) {
-				member.player = players.get(parseString(line.substring(posEqualsSign + 1)));
+				member.setPlayer(players.get(parseString(line.substring(posEqualsSign + 1))));
 			} else if ("role".equals(name)) {
-				member.role = parseString(line.substring(posEqualsSign + 1));
+				member.setRole(parseString(line.substring(posEqualsSign + 1)));
 			} else if ("note".equals(name)) {
-				member.note = parseString(line.substring(posEqualsSign + 1));
+				member.setNote(parseString(line.substring(posEqualsSign + 1)));
 			} else if ("subscribed".equals(name)) {
-				member.subscribed = parseInt(line.substring(posEqualsSign + 1));
+				member.setSubscribed(parseInt(line.substring(posEqualsSign + 1)));
 			}
 		}
 		
@@ -234,9 +234,9 @@ public class DkpData {
 			
 			String name = parseString(line.substring(0, posEqualsSign));
 			if ("class_name".equals(name)) {
-				raidClass.className = parseString(line.substring(posEqualsSign + 1));
+				raidClass.setClassName(parseString(line.substring(posEqualsSign + 1)));
 			} else if ("class_count".equals(name)) {
-				raidClass.count = parseInt(line.substring(posEqualsSign + 1));
+				raidClass.setCount(parseInt(line.substring(posEqualsSign + 1)));
 			} 
 		}
 		

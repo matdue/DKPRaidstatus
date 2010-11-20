@@ -71,10 +71,10 @@ public class RaidDatabase extends SQLiteOpenHelper {
 			db.beginTransaction();
 			for (Player player : players) {
 				ContentValues values = new ContentValues();
-				values.put(PlayerColumns.NAME, player.name);
-				values.put(PlayerColumns.CLASSNAME, player.className);
-				values.put(PlayerColumns.CURRENTDKP, player.currentDkp.doubleValue());
-				player._id = insertHelper.insert(values);
+				values.put(PlayerColumns.NAME, player.getName());
+				values.put(PlayerColumns.CLASSNAME, player.getClassName());
+				values.put(PlayerColumns.CURRENTDKP, player.getCurrentDkp().doubleValue());
+				player.set_id(insertHelper.insert(values));
 			}
 			db.setTransactionSuccessful();
 			db.endTransaction();
@@ -91,18 +91,18 @@ public class RaidDatabase extends SQLiteOpenHelper {
 			db.beginTransaction();
 			for (Raid raid : raids) {
 				ContentValues values = new ContentValues();
-				values.put(RaidColumns.NAME, raid.name);
-				values.put(RaidColumns.ICON, raid.icon);
-				values.put(RaidColumns.NOTE, raid.note);
-				values.put(RaidColumns.START, raid.start.getTime() / 1000);
-				values.put(RaidColumns.FINISH, raid.finish.getTime() / 1000);
-				values.put(RaidColumns.INVITE, raid.invite.getTime() / 1000);
-				values.put(RaidColumns.SUBSCRIPTION, raid.subscription.getTime() / 1000);
-				values.put(RaidColumns.ATTENDEES, raid.attendees);
-				raid._id = insertHelper.insert(values);
+				values.put(RaidColumns.NAME, raid.getName());
+				values.put(RaidColumns.ICON, raid.getIcon());
+				values.put(RaidColumns.NOTE, raid.getNote());
+				values.put(RaidColumns.START, raid.getStart().getTime() / 1000);
+				values.put(RaidColumns.FINISH, raid.getFinish().getTime() / 1000);
+				values.put(RaidColumns.INVITE, raid.getInvite().getTime() / 1000);
+				values.put(RaidColumns.SUBSCRIPTION, raid.getSubscription().getTime() / 1000);
+				values.put(RaidColumns.ATTENDEES, raid.getAttendees());
+				raid.set_id(insertHelper.insert(values));
 
-				insertRaidClasses(db, raid.raidClasses, raid._id);
-				insertRaidMembers(db, raid.raidMembers, raid._id);
+				insertRaidClasses(db, raid.getRaidClasses(), raid.get_id());
+				insertRaidMembers(db, raid.getRaidMembers(), raid.get_id());
 			}
 			db.setTransactionSuccessful();
 			db.endTransaction();
@@ -118,9 +118,9 @@ public class RaidDatabase extends SQLiteOpenHelper {
 			for (RaidClass raidClass : raidClasses) {
 				ContentValues values = new ContentValues();
 				values.put(RaidClassColumns.RAIDID, raidID);
-				values.put(RaidClassColumns.CLASSNAME, raidClass.className);
-				values.put(RaidClassColumns.COUNT, raidClass.count);
-				raidClass._id = insertHelper.insert(values);
+				values.put(RaidClassColumns.CLASSNAME, raidClass.getClassName());
+				values.put(RaidClassColumns.COUNT, raidClass.getCount());
+				raidClass.set_id(insertHelper.insert(values));
 			}
 		} finally {
 			insertHelper.close();
@@ -132,12 +132,12 @@ public class RaidDatabase extends SQLiteOpenHelper {
 		try {
 			for (RaidMember raidMember : raidMembers) {
 				ContentValues values = new ContentValues();
-				values.put(RaidMemberColumns.SUBSCRIBED, raidMember.subscribed);
-				values.put(RaidMemberColumns.PLAYERID, raidMember.player._id);
+				values.put(RaidMemberColumns.SUBSCRIBED, raidMember.getSubscribed());
+				values.put(RaidMemberColumns.PLAYERID, raidMember.getPlayer().get_id());
 				values.put(RaidMemberColumns.RAIDID, raidID);
-				values.put(RaidMemberColumns.NOTE, raidMember.note);
-				values.put(RaidMemberColumns.ROLE, raidMember.role);
-				raidMember._id = insertHelper.insert(values);
+				values.put(RaidMemberColumns.NOTE, raidMember.getNote());
+				values.put(RaidMemberColumns.ROLE, raidMember.getRole());
+				raidMember.set_id(insertHelper.insert(values));
 			}
 		} finally {
 			insertHelper.close();
@@ -158,52 +158,53 @@ public class RaidDatabase extends SQLiteOpenHelper {
 				null, null, null, null, RaidColumns.START, "1");
 		if (cursor.moveToNext()) {
 			raid = new Raid();
-			raid._id = cursor.getLong(0);
-			raid.name = cursor.getString(1);
-			raid.start = new Date(1000L * cursor.getInt(2));
-			raid.icon = cursor.getString(3);
+			raid.set_id(cursor.getLong(0));
+			raid.setName(cursor.getString(1));
+			raid.setStart(new Date(1000L * cursor.getInt(2)));
+			raid.setIcon(cursor.getString(3));
 		}
 		cursor.close();
 		
 		// Load its members
 		if (raid != null) {
-			raid.raidMembers = new ArrayList<RaidMember>();
+			raid.setRaidMembers(new ArrayList<RaidMember>());
 			String query = "SELECT p." + PlayerColumns.NAME + ", p." + PlayerColumns.CLASSNAME + ", p." + PlayerColumns.CURRENTDKP +
 				", m." + RaidMemberColumns.SUBSCRIBED + ", m." + RaidMemberColumns.NOTE + ", m." + RaidMemberColumns.ROLE +
 				" FROM " + RaidMemberTable.TABLE_NAME + " m, " + PlayerTable.TABLE_NAME + " p" +
 				" WHERE m." + RaidMemberColumns.RAIDID + " = ?" +
 				" AND m." + RaidMemberColumns.PLAYERID + " = p." + PlayerColumns.ID;
-			cursor = db.rawQuery(query, new String[] { Long.toString(raid._id) });
+			cursor = db.rawQuery(query, new String[] { Long.toString(raid.get_id()) });
 			while (cursor.moveToNext()) {
+				Player player = new Player();
+				player.setName(cursor.getString(0));
+				player.setClassName(cursor.getString(1));
+				player.setCurrentDkp(new BigDecimal(cursor.getString(2)));
+
 				RaidMember member = new RaidMember();
-				Player player = member.player = new Player();
-				player.name = cursor.getString(0);
-				player.className = cursor.getString(1);
-				player.currentDkp = new BigDecimal(cursor.getString(2));
+				member.setPlayer(player);
+				member.setSubscribed(cursor.getInt(3));
+				member.setNote(cursor.getString(4));
+				member.setRole(cursor.getString(5));
 				
-				member.subscribed = cursor.getInt(3);
-				member.note = cursor.getString(4);
-				member.role = cursor.getString(5);
-				
-				raid.raidMembers.add(member);
+				raid.getRaidMembers().add(member);
 			}
 			cursor.close();
 		}
 		
 		// Load its classes
 		if (raid != null) {
-			raid.raidClasses = new ArrayList<RaidClass>();
+			raid.setRaidClasses(new ArrayList<RaidClass>());
 			cursor = db.query(RaidClassTable.TABLE_NAME, 
 					new String[] { RaidClassColumns.CLASSNAME, RaidClassColumns.COUNT }, 
 					RaidClassColumns.RAIDID + " = ?", 
-					new String[] { Long.toString(raid._id) }, 
+					new String[] { Long.toString(raid.get_id()) }, 
 					null, null, null);
 			while (cursor.moveToNext()) {
 				RaidClass raidClass = new RaidClass();
-				raidClass.className = cursor.getString(0);
-				raidClass.count = cursor.getInt(1);
+				raidClass.setClassName(cursor.getString(0));
+				raidClass.setCount(cursor.getInt(1));
 				
-				raid.raidClasses.add(raidClass);
+				raid.getRaidClasses().add(raidClass);
 			}
 			cursor.close();
 		}

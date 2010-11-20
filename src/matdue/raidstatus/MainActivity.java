@@ -109,13 +109,13 @@ public class MainActivity extends Activity {
     		findViewById(R.id.RaidLayout).setVisibility(View.VISIBLE);
     		
     		// Raid information
-    		String message = getResources().getString(R.string.main_raid_title, nextRaid.name);
+    		String message = getResources().getString(R.string.main_raid_title, nextRaid.getName());
     		TextView view = (TextView) findViewById(R.id.main_raid_title);
     		view.setText(message);
     		
     		message = getResources().getString(R.string.main_raid_datetime, 
-    				DateFormat.format(getResources().getString(R.string.main_raid_date_format), nextRaid.start),
-    				DateFormat.format(getResources().getString(R.string.main_raid_time_format), nextRaid.start));
+    				DateFormat.format(getResources().getString(R.string.main_raid_date_format), nextRaid.getStart()),
+    				DateFormat.format(getResources().getString(R.string.main_raid_time_format), nextRaid.getStart()));
     		view = (TextView) findViewById(R.id.main_raid_datetime);
     		view.setText(message);
     		
@@ -123,7 +123,7 @@ public class MainActivity extends Activity {
     		if (!url.endsWith("/")) {
     			url = url + "/";
     		}
-    		url = url + "games/WoW/events/" + nextRaid.icon;
+    		url = url + "games/WoW/events/" + nextRaid.getIcon();
     		ImageLoader imageLoader = new ImageLoader(url, handler, getCacheDir(), R.id.RaidLogo);
     		new Thread(imageLoader).run();
     		
@@ -131,23 +131,23 @@ public class MainActivity extends Activity {
     		String playerName = getSharedPreferences().getString("charname", null);
     		if (playerName != null) {
 				// Lookup player in members
-				for (RaidMember member : nextRaid.raidMembers) {
-					if (playerName.equals(member.player.name)) {
+				for (RaidMember member : nextRaid.getRaidMembers()) {
+					if (playerName.equals(member.getPlayer().getName())) {
 						// Got it, display information
-						String subscription = getResources().getStringArray(R.array.subscription)[member.subscribed];
+						String subscription = getResources().getStringArray(R.array.subscription)[member.getSubscribed()];
 						
-						if (member.role == null) {
+						if (member.getRole() == null) {
 							message = getResources().getString(R.string.main_raid_player, 
 									playerName, subscription);
 						} else {
 							String role = "???";
-							if ("tank".equals(member.role)) {
+							if ("tank".equals(member.getRole())) {
 								role = getResources().getStringArray(R.array.role)[0];
-							} else if ("healer".equals(member.role)) {
+							} else if ("healer".equals(member.getRole())) {
 								role = getResources().getStringArray(R.array.role)[1];
-							} else if ("melee".equals(member.role)) {
+							} else if ("melee".equals(member.getRole())) {
 								role = getResources().getStringArray(R.array.role)[2];
-							} else if ("range".equals(member.role)) {
+							} else if ("range".equals(member.getRole())) {
 								role = getResources().getStringArray(R.array.role)[3];
 							}
 							
@@ -160,8 +160,8 @@ public class MainActivity extends Activity {
 						
 						// Note
 						view = (TextView) findViewById(R.id.main_raid_player_note);
-						if (member.note != null && member.note.length() != 0) {
-							message = getResources().getString(R.string.main_raid_player_note, member.note);
+						if (member.getNote() != null && member.getNote().length() != 0) {
+							message = getResources().getString(R.string.main_raid_player_note, member.getNote());
 							view.setText(message);
 							view.setVisibility(View.VISIBLE);
 						} else {
@@ -170,7 +170,7 @@ public class MainActivity extends Activity {
 						
 						// DKP
 						message = getResources().getString(R.string.main_raid_player_dkp, 
-								NumberFormat.getInstance().format(member.player.currentDkp));
+								NumberFormat.getInstance().format(member.getPlayer().getCurrentDkp()));
 						view = (TextView) findViewById(R.id.main_raid_player_dkp);
 						view.setText(message);
 						view.setVisibility(View.VISIBLE);

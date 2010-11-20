@@ -4,11 +4,42 @@ import java.math.BigDecimal;
 
 public class Player {
 	
-	// No getters and setters
-	public long _id;
+	private long _id;
 	
-	public String name;
-	public String className;
-	public BigDecimal currentDkp;
+	private String name;
+	private String className;
+	private BigDecimal currentDkp;
+	
+	public long get_id() {
+		return _id;
+	}
+	
+	public void set_id(long id) {
+		_id = id;
+	}
+	
+	public String getName() {
+		return name;
+	}
+	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getClassName() {
+		return className;
+	}
+	
+	public void setClassName(String className) {
+		this.className = className;
+	}
+	
+	public BigDecimal getCurrentDkp() {
+		return currentDkp;
+	}
+	
+	public void setCurrentDkp(BigDecimal currentDkp) {
+		this.currentDkp = currentDkp;
+	}
 	
 }
