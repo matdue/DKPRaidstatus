@@ -21,31 +21,25 @@ import org.apache.http.client.methods.HttpGet;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.os.Handler;
+import android.os.AsyncTask;
 import android.util.Log;
 
-public class ImageLoader implements Runnable {
-
-	public static final int OK = 2000;
+public class ImageLoaderTask extends AsyncTask<String, Void, Bitmap> {
 	
 	private final static String USER_AGENT = "DKP Raidstatus";
 	
 	private static HashMap<String, SoftReference<Bitmap>> imageCache = new HashMap<String, SoftReference<Bitmap>>();
 	
-	private String url;
-	private Handler handler;
 	private File cacheDir;
-	private int widgetID;
-	
-	public ImageLoader(String url, Handler handler, File cacheDir, int widgetID) {
-		this.url = url;
-		this.handler = handler;
+
+	public ImageLoaderTask(File cacheDir) {
 		this.cacheDir = cacheDir;
-		this.widgetID = widgetID;
 	}
-	
+
 	@Override
-	public void run() {
+	protected Bitmap doInBackground(String... urls) {
+		String url = urls[0];
+		
 		// Hash tag of URL
 		String md5HashTag;
 		try {
@@ -64,8 +58,7 @@ public class ImageLoader implements Runnable {
 			Bitmap cachedImage = cachedImageReference.get();
 			if (cachedImage != null) {
 				Log.v("ImageLoader", "In memory cache: " + url);
-				handler.obtainMessage(OK, widgetID, 0, cachedImage).sendToTarget();
-				return;
+				return cachedImage;
 			}
 		}
 		
@@ -84,8 +77,7 @@ public class ImageLoader implements Runnable {
 					imageCache.put(md5HashTag, new SoftReference<Bitmap>(cachedImage));
 					
 					Log.v("ImageLoader", "In file cache: " + url);
-					handler.obtainMessage(OK, widgetID, 0, cachedImage).sendToTarget();
-					return;
+					return cachedImage;
 				}
 			}
 		}
@@ -114,9 +106,7 @@ public class ImageLoader implements Runnable {
 		        	if (cachedImage != null) {
 		        		// Cache image in memory
 		        		imageCache.put(md5HashTag, new SoftReference<Bitmap>(cachedImage));
-		        		
-		        		handler.obtainMessage(OK, widgetID, 0, cachedImage).sendToTarget();
-						return;
+		        		return cachedImage;
 		        	}
 				} 
 			} 
@@ -130,8 +120,9 @@ public class ImageLoader implements Runnable {
 		// To be sure to reload the image next time, delete all caches for that image.
 		imageCache.remove(md5HashTag);
 		cachedImageFile.delete();
+		return null;
 	}
-
+	
 	private void copyStream(InputStream in, OutputStream out) throws IOException {
 		byte[] buffer = new byte[4096];
 		int bytesRead;
@@ -139,5 +130,5 @@ public class ImageLoader implements Runnable {
 			out.write(buffer, 0, bytesRead);
 		}
 	}
-	
+
 }

@@ -43,11 +43,6 @@ public class MainActivity extends Activity {
 				setProgressBarIndeterminateVisibility(false);
 				Toast.makeText(MainActivity.this, R.string.message_dkp_no_data, Toast.LENGTH_LONG).show();
 				break;
-				
-			case ImageLoader.OK:
-				ImageView image = (ImageView) findViewById(msg.arg1);
-	    		image.setImageBitmap((Bitmap) msg.obj);
-	    		break;
 			}
 		}
 	};
@@ -124,8 +119,15 @@ public class MainActivity extends Activity {
     			url = url + "/";
     		}
     		url = url + "games/WoW/events/" + nextRaid.getIcon();
-    		ImageLoader imageLoader = new ImageLoader(url, handler, getCacheDir(), R.id.RaidLogo);
-    		new Thread(imageLoader).run();
+    		new ImageLoaderTask(getCacheDir()) {
+    			@Override
+    			protected void onPostExecute(Bitmap result) {
+    				if (result != null) {
+    					ImageView image = (ImageView) findViewById(R.id.RaidLogo);
+    		    		image.setImageBitmap(result);
+    				}
+    			};
+    		}.execute(url);
     		
     		// Player information
     		String playerName = getSharedPreferences().getString("charname", null);
