@@ -24,8 +24,12 @@
 		<TextView android:layout_height="wrap_content" android:id="@+id/main_raid_datetime"
 			android:layout_below="@id/main_raid_title" android:layout_width="wrap_content"
 			android:layout_alignParentLeft="true" android:layout_toLeftOf="@id/RaidLogo" />
+		<Button android:layout_height="wrap_content"
+			android:layout_width="wrap_content" android:id="@+id/main_raid_showinfo"
+			android:layout_below="@id/main_raid_datetime" android:text="@string/main_raid_button_info"
+			android:layout_marginTop="30dp" />
 		<TextView android:layout_width="wrap_content"
-			android:layout_height="wrap_content" android:layout_below="@+id/main_raid_datetime"
+			android:layout_height="wrap_content" android:layout_below="@id/main_raid_showinfo"
 			android:id="@+id/main_raid_player" android:layout_marginTop="50dp"
 			android:visibility="gone" />
 		<TextView android:layout_width="wrap_content"
@@ -36,7 +40,7 @@
 			android:id="@+id/main_raid_player_dkp" android:layout_below="@id/main_raid_player_note"
 			android:layout_marginTop="5dp" />
 
-</RelativeLayout>
-	
+	</RelativeLayout>
+
 
 </LinearLayout>

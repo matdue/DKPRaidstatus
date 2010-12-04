@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_height="fill_parent" android:layout_width="fill_parent"
+	android:orientation="vertical">
+	<matdue.raidstatus.ViewFlipperBugfixed android:id="@+id/screen_flipper"
+		android:layout_width="fill_parent" android:layout_height="fill_parent">
+		<include android:id="@+id/screen_a" layout="@layout/raidinfo_screen" />
+		<include android:id="@+id/screen_b" layout="@layout/raidinfo_screen" />
+	</matdue.raidstatus.ViewFlipperBugfixed>
+
+</LinearLayout>

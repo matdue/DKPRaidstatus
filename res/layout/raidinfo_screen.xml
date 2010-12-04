@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent" android:layout_height="fill_parent"
+	android:padding="5dp">
+	<ImageView android:layout_width="wrap_content"
+		android:layout_height="wrap_content" android:layout_alignParentRight="true"
+		android:layout_alignParentTop="true" android:scaleType="centerCrop"
+		android:adjustViewBounds="true" android:maxHeight="100dp"
+		android:maxWidth="100dp" android:layout_marginLeft="10dp" android:id="@+id/raid_info_logo" />
+	<TextView android:layout_height="wrap_content" android:id="@+id/raid_info_title"
+		android:layout_alignParentTop="true" android:layout_width="wrap_content"
+		android:layout_alignParentLeft="true" android:layout_toLeftOf="@id/raid_info_logo"/>
+	<TextView android:layout_height="wrap_content" android:id="@+id/raid_info_datetime"
+		android:layout_below="@id/raid_info_title" android:layout_width="wrap_content"
+		android:layout_alignParentLeft="true" android:layout_toLeftOf="@id/raid_info_logo" />
+	<WebView android:layout_height="fill_parent"
+		android:layout_width="fill_parent" android:layout_below="@id/raid_info_datetime"
+		android:id="@+id/raid_info_main" android:layout_marginTop="50dp"/>
+</RelativeLayout>

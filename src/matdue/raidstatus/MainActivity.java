@@ -18,6 +18,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -65,6 +66,14 @@ public class MainActivity extends Activity {
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.main);
         
+        Button showInfoButton = (Button) findViewById(R.id.main_raid_showinfo);
+        showInfoButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				showRaidInfo();
+			}
+		});
+        
         updateView();
     }
     
@@ -98,7 +107,7 @@ public class MainActivity extends Activity {
     
     private void updateView() {
     	RaidDatabase db = new RaidDatabase(this);
-    	Raid nextRaid = db.loadRaid();
+    	Raid nextRaid = db.loadRaid(0);
     	if (nextRaid != null) {
     		findViewById(R.id.NoDataLayout).setVisibility(View.GONE);
     		findViewById(R.id.RaidLayout).setVisibility(View.VISIBLE);
@@ -186,6 +195,10 @@ public class MainActivity extends Activity {
     		findViewById(R.id.NoDataLayout).setVisibility(View.VISIBLE);
     	}
     	db.close();
+    }
+    
+    private void showRaidInfo() {
+    	startActivity(new Intent(this, RaidInfoActivity.class));
     }
     
     @Override

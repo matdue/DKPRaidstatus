@@ -144,7 +144,7 @@ public class RaidDatabase extends SQLiteOpenHelper {
 		}
 	}
 	
-	public Raid loadRaid() {
+	public Raid loadRaid(int idx) {
 		SQLiteDatabase db = getReadableDatabase();
 		
 		// Load raid
@@ -154,14 +154,18 @@ public class RaidDatabase extends SQLiteOpenHelper {
 					RaidColumns.ID,
 					RaidColumns.NAME, 
 					RaidColumns.START,
-					RaidColumns.ICON }, 
-				null, null, null, null, RaidColumns.START, "1");
+					RaidColumns.ICON,
+					RaidColumns.ATTENDEES}, 
+				null, null, null, null, 
+				RaidColumns.START,  // order by 
+				Integer.toString(idx) + ",1");  // offset,limit
 		if (cursor.moveToNext()) {
 			raid = new Raid();
 			raid.set_id(cursor.getLong(0));
 			raid.setName(cursor.getString(1));
 			raid.setStart(new Date(1000L * cursor.getInt(2)));
 			raid.setIcon(cursor.getString(3));
+			raid.setAttendees(cursor.getInt(4));
 		}
 		cursor.close();
 		

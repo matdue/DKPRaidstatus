@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="main_raid_button_info">Details</string>
 	<string name="main_raid_player_role">%1$s ist %2$s als %3$s</string>
 	<string name="main_raid_player">%1$s ist %2$s</string>
 	<string name="menu_main_update">Aktualisieren</string>
@@ -24,4 +25,6 @@
 	<string name="main_no_data">Keine Daten vorhanden</string>
 	<string name="main_raid_player_note">Notiz: %1$s</string>
 	<string name="main_raid_player_dkp">%1$s DKP</string>
+<string name="raid_info_first_reached">Erster Raid erreicht</string>
+<string name="raid_info_last_reached">Letzter Raid erreicht</string>
 </resources>
