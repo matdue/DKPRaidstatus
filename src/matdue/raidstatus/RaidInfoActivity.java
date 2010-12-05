@@ -76,6 +76,27 @@ public class RaidInfoActivity extends Activity {
                 return true;
 			}
 		});
+	}
+	
+	@Override
+	protected void onSaveInstanceState(Bundle outState) {
+		outState.putInt("currentRaidIdx", currentRaidIdx);
+		
+		super.onSaveInstanceState(outState);
+	}
+	
+	@Override
+	protected void onRestoreInstanceState(Bundle savedInstanceState) {
+		if (savedInstanceState != null) {
+			currentRaidIdx = savedInstanceState.getInt("currentRaidIdx", 0);
+		}
+		
+		super.onRestoreInstanceState(savedInstanceState);
+	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
 		
 		ViewFlipper viewFlipper = (ViewFlipper) findViewById(R.id.screen_flipper);
 		View screen = viewFlipper.getCurrentView();
