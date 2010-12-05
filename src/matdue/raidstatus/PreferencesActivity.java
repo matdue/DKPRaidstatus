@@ -1,6 +1,8 @@
 package matdue.raidstatus;
 
 import matdue.raidstatus.data.database.RaidDatabase;
+import android.content.ContextWrapper;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.PreferenceActivity;
@@ -22,6 +24,10 @@ public class PreferencesActivity extends PreferenceActivity {
 		charnamePreference.setEntries(playerNames);
 		charnamePreference.setEntryValues(playerNames);
 		charnamePreference.setEnabled(playerNames.length != 0);
+	}
+	
+	public static final SharedPreferences getApplicationPreferences(final ContextWrapper ctx) {
+		return ctx.getSharedPreferences(ctx.getPackageName() + "_preferences", MODE_PRIVATE);
 	}
 
 }

@@ -9,7 +9,6 @@ import matdue.raidstatus.data.Raid;
 import matdue.raidstatus.data.RaidMember;
 import matdue.raidstatus.data.database.RaidDatabase;
 import android.app.Activity;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.text.format.DateFormat;
@@ -126,7 +125,7 @@ public class RaidInfoActivity extends Activity {
 		view = (TextView) screen.findViewById(R.id.raid_info_datetime);
 		view.setText(message);
 		
-		String url = getSharedPreferences().getString("url", "");
+		String url = PreferencesActivity.getApplicationPreferences(this).getString("url", "");
 		if (!url.endsWith("/")) {
 			url = url + "/";
 		}
@@ -292,9 +291,4 @@ public class RaidInfoActivity extends Activity {
 		
 		return filteredMembers.toArray(new RaidMember[0]);
 	}
-    
-    private SharedPreferences getSharedPreferences() {
-    	return getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
-    }
-	
 }

@@ -61,7 +61,7 @@ public class MainActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        getSharedPreferences().registerOnSharedPreferenceChangeListener(preferencesListener);
+        PreferencesActivity.getApplicationPreferences(this).registerOnSharedPreferenceChangeListener(preferencesListener);
         
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.main);
@@ -92,7 +92,7 @@ public class MainActivity extends Activity {
     	super.onResume();
     	
     	// Automatically update if last update is an hour or more ago
-    	long lastUpdate = getSharedPreferences().getLong("lastUpdate", 0);
+    	long lastUpdate = PreferencesActivity.getApplicationPreferences(this).getLong("lastUpdate", 0);
     	if (lastUpdate == 0 || new Date().getTime() - lastUpdate > 60*60*1000L) {
     		updateRaidData();
     	}
@@ -102,7 +102,7 @@ public class MainActivity extends Activity {
     protected void onDestroy() {
     	super.onDestroy();
     	
-    	getSharedPreferences().unregisterOnSharedPreferenceChangeListener(preferencesListener);
+    	PreferencesActivity.getApplicationPreferences(this).unregisterOnSharedPreferenceChangeListener(preferencesListener);
     }
     
     private void updateView() {
@@ -123,7 +123,7 @@ public class MainActivity extends Activity {
     		view = (TextView) findViewById(R.id.main_raid_datetime);
     		view.setText(message);
     		
-    		String url = getSharedPreferences().getString("url", "");
+    		String url = PreferencesActivity.getApplicationPreferences(this).getString("url", "");
     		if (!url.endsWith("/")) {
     			url = url + "/";
     		}
@@ -139,7 +139,7 @@ public class MainActivity extends Activity {
     		}.execute(url);
     		
     		// Player information
-    		String playerName = getSharedPreferences().getString("charname", null);
+    		String playerName = PreferencesActivity.getApplicationPreferences(this).getString("charname", null);
     		if (playerName != null) {
 				// Lookup player in members
 				for (RaidMember member : nextRaid.getRaidMembers()) {
@@ -224,12 +224,12 @@ public class MainActivity extends Activity {
     }
     
     private void updateRaidData() {
-    	Editor editor = getSharedPreferences().edit();
+    	Editor editor = PreferencesActivity.getApplicationPreferences(this).edit();
     	editor.putLong("lastUpdate", new Date().getTime());
     	editor.commit();  // will trigger registered OnSharedPreferenceChangeListener
     	preferencesHaveChanged = false;
     	
-		String url = getSharedPreferences().getString("url", null);
+		String url = PreferencesActivity.getApplicationPreferences(this).getString("url", null);
 		if (url == null) {
 			Toast.makeText(this, R.string.message_not_configured_yet, Toast.LENGTH_SHORT).show();
 			return;
@@ -244,9 +244,5 @@ public class MainActivity extends Activity {
         RaidDatabase db = new RaidDatabase(this);
         ConcurrentUpdater updater = new ConcurrentUpdater(url, handler, db);
         new Thread(updater).start();
-    }
-    
-    private SharedPreferences getSharedPreferences() {
-    	return getSharedPreferences(getPackageName() + "_preferences", MODE_PRIVATE);
     }
 }
