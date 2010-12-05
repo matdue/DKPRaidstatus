@@ -81,6 +81,14 @@ public class MainActivity extends Activity {
 			}
 		});
         
+        Button configButton = (Button) findViewById(R.id.main_button_config);
+        configButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
+			}
+		});
+        
         updateView();
     }
     
@@ -196,6 +204,10 @@ public class MainActivity extends Activity {
 						break;
 					}
 				}
+    		} else {
+    			view = (TextView) findViewById(R.id.main_raid_player);
+    			view.setText(R.string.main_raid_no_character);
+				view.setVisibility(View.VISIBLE);
     		}
     	} else {
     		findViewById(R.id.RaidLayout).setVisibility(View.GONE);
