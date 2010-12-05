@@ -25,22 +25,29 @@ import android.widget.Toast;
 
 public class MainActivity extends Activity {
 	
+	// Update thread; to prevent multiple updater threads running,
+	// we'll save the current thread here
+	private Thread updaterThread = null;
+	
 	private Handler handler = new Handler() {
 		@Override
 		public void handleMessage(android.os.Message msg) {
 			switch (msg.what) {
 			case ConcurrentUpdater.OK:
+				updaterThread = null;
 				setProgressBarIndeterminateVisibility(false);
 				updateView();
 				break;
 				
 			case ConcurrentUpdater.NETWORK_ERROR:
+				updaterThread = null;
 				setProgressBarIndeterminateVisibility(false);
 				String message = getResources().getString(R.string.message_dkp_network_error, msg.obj);
 				Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
 				break;
 			
 			case ConcurrentUpdater.NO_DATA:
+				updaterThread = null;
 				setProgressBarIndeterminateVisibility(false);
 				Toast.makeText(MainActivity.this, R.string.message_dkp_no_data, Toast.LENGTH_LONG).show();
 				break;
@@ -224,6 +231,11 @@ public class MainActivity extends Activity {
     }
     
     private void updateRaidData() {
+    	if (updaterThread != null && updaterThread.getState() != Thread.State.TERMINATED) {
+    		// Updating still in progress, exit silently
+    		return;
+    	}
+    	
     	Editor editor = PreferencesActivity.getApplicationPreferences(this).edit();
     	editor.putLong("lastUpdate", new Date().getTime());
     	editor.commit();  // will trigger registered OnSharedPreferenceChangeListener
@@ -243,6 +255,7 @@ public class MainActivity extends Activity {
         setProgressBarIndeterminateVisibility(true);
         RaidDatabase db = new RaidDatabase(this);
         ConcurrentUpdater updater = new ConcurrentUpdater(url, handler, db);
-        new Thread(updater).start();
+        updaterThread = new Thread(updater);
+        updaterThread.start();
     }
 }
