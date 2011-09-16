@@ -145,7 +145,6 @@ public class RaidInfoActivity extends Activity {
 		infoView.cancelLongPress();
 		infoView.getSettings().setDefaultTextEncodingName("utf-8");
 		infoView.setOnTouchListener(new View.OnTouchListener() {
-			@Override
 			public boolean onTouch(View v, MotionEvent event) {
 				if (mGestureDetector.onTouchEvent(event)) {
 	                // Return false, although the event has been consumed.
@@ -269,7 +268,6 @@ public class RaidInfoActivity extends Activity {
 		final Collator col = Collator.getInstance();
 		RaidMember[] sortedMembers = members.toArray(new RaidMember[0]);
 		Arrays.sort(sortedMembers, new Comparator<RaidMember>() {
-			@Override
 			public int compare(RaidMember x, RaidMember y) {
 				return col.compare(x.getPlayer().getName(), y.getPlayer().getName());
 			}}

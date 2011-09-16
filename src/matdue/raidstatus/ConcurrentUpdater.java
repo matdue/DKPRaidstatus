@@ -36,7 +36,6 @@ public class ConcurrentUpdater implements Runnable {
 		this.raidDatabase = raidDatabase;
 	}
 	
-	@Override
 	public void run() {
 		HttpClient httpClient = HttpClientHelper.newInstance(USER_AGENT);
 		try {

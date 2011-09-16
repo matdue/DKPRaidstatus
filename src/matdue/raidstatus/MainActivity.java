@@ -57,8 +57,6 @@ public class MainActivity extends Activity {
 	
 	private boolean preferencesHaveChanged = false;
 	private SharedPreferences.OnSharedPreferenceChangeListener preferencesListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
-		
-		@Override
 		public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
 			preferencesHaveChanged = true;
 		}
@@ -75,7 +73,6 @@ public class MainActivity extends Activity {
         
         Button showInfoButton = (Button) findViewById(R.id.main_raid_showinfo);
         showInfoButton.setOnClickListener(new View.OnClickListener() {
-			@Override
 			public void onClick(View v) {
 				showRaidInfo();
 			}
@@ -83,7 +80,6 @@ public class MainActivity extends Activity {
         
         Button configButton = (Button) findViewById(R.id.main_button_config);
         configButton.setOnClickListener(new View.OnClickListener() {
-			@Override
 			public void onClick(View v) {
 				startActivity(new Intent(MainActivity.this, PreferencesActivity.class));
 			}

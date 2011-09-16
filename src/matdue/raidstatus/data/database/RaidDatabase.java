@@ -242,7 +242,6 @@ public class RaidDatabase extends SQLiteOpenHelper {
 		// Sort names
 		final Collator col = Collator.getInstance();
 		Arrays.sort(result, new Comparator<String>() {
-			@Override
 			public int compare(String string1, String string2) {
 				return col.compare(string1, string2);
 			}}
